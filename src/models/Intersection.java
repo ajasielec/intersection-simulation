@@ -9,14 +9,37 @@ import java.util.List;
 import java.util.Queue;
 
 public class Intersection {
+    // traffic lights list
+    private List<TrafficLight> trafficLights = new ArrayList<>();
+
+    // current light cycle (default - green for north and south)
+    private TrafficCycle currentGreen = TrafficCycle.NORTH_SOUTH;
+
     // queues for each direction
     private Queue<Vehicle> northQueue = new LinkedList<>();
     private Queue<Vehicle> southQueue = new LinkedList<>();
     private Queue<Vehicle> eastQueue = new LinkedList<>();
     private Queue<Vehicle> westQueue = new LinkedList<>();
 
-    // current light cycle (default - green for north and south)
-    private TrafficCycle currentGreen = TrafficCycle.NORTH_SOUTH;
+    // adding a traffic light
+    public void addTrafficLight(TrafficLight trafficLight) {
+        trafficLights.add(trafficLight);
+    }
+
+    // updating traffic light with current cycle
+    public void updateTrafficLights() {
+        for (TrafficLight light : trafficLights) {
+            if (currentGreen == TrafficCycle.NORTH_SOUTH &&
+                (light.getDirection() == Direction.NORTH || light.getDirection() == Direction.SOUTH)) {
+                light.nextColor();
+            } else if (currentGreen == TrafficCycle.EAST_WEST &&
+            (light.getDirection() == Direction.EAST || light.getDirection() == Direction.NORTH)) {
+                light.nextColor();
+            } else {
+                light.nextColor();
+            }
+        }
+    }
 
     // adding a vehicle to a specific queue
     public void addVehicle (Vehicle vehicle) {
@@ -47,6 +70,7 @@ public class Intersection {
                 currentGreen = TrafficCycle.NORTH_SOUTH;
             }
         }
+        updateTrafficLights();
 
         return leftVehicles;
     }

@@ -8,6 +8,18 @@ public class Main {
 
         Intersection intersection = new Intersection();
 
+        // creating lights
+        TrafficLight northLight = new TrafficLight(Direction.NORTH, 30, 5, 60);
+        TrafficLight southLight = new TrafficLight(Direction.SOUTH, 30, 5, 60);
+        TrafficLight eastLight = new TrafficLight(Direction.EAST, 30, 5, 60);
+        TrafficLight westLight = new TrafficLight(Direction.WEST, 30, 5, 60);
+
+        // adding lights to intersection
+        intersection.addTrafficLight(northLight);
+        intersection.addTrafficLight(southLight);
+        intersection.addTrafficLight(eastLight);
+        intersection.addTrafficLight(westLight);
+
         // creating vehicles
         Vehicle vehicle1 = new Vehicle("1", Direction.WEST, Direction.EAST);
         Vehicle vehicle2 = new Vehicle("2", Direction.WEST, Direction.EAST);
@@ -24,9 +36,11 @@ public class Main {
 
         // step simulation
         System.out.println("Step 1: " + intersection.step());
+        System.out.println("Step 2: " + intersection.step());
+        System.out.println("Step 3: " + intersection.step());
+        System.out.println("Step 4: " + intersection.step());
 
         // creating light
-        TrafficLight northLight = new TrafficLight(Direction.NORTH, 30, 5, 60);
 
         System.out.println(northLight);
 
