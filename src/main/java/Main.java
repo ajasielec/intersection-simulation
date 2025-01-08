@@ -5,27 +5,32 @@ import models.Vehicle;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import simulation.Command;
 import simulation.CommandList;
+import simulation.SimulationResult;
+import simulation.StepStatus;
 import utils.JsonUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 
         // creating intersections
-        Intersection intersection = new Intersection();
 
-        // creating lights
-        TrafficLight northLight = new TrafficLight(Direction.NORTH, 30, 5, 60);
-        TrafficLight southLight = new TrafficLight(Direction.SOUTH, 30, 5, 60);
-        TrafficLight eastLight = new TrafficLight(Direction.EAST, 30, 5, 60);
-        TrafficLight westLight = new TrafficLight(Direction.WEST, 30, 5, 60);
 
-        // adding lights to intersection
-        intersection.addTrafficLight(northLight);
-        intersection.addTrafficLight(southLight);
-        intersection.addTrafficLight(eastLight);
-        intersection.addTrafficLight(westLight);
+//        // creating lights
+//        TrafficLight northLight = new TrafficLight(Direction.NORTH, 30, 5, 60);
+//        TrafficLight southLight = new TrafficLight(Direction.SOUTH, 30, 5, 60);
+//        TrafficLight eastLight = new TrafficLight(Direction.EAST, 30, 5, 60);
+//        TrafficLight westLight = new TrafficLight(Direction.WEST, 30, 5, 60);
+//
+//        // adding lights to intersection
+//        intersection.addTrafficLight(northLight);
+//        intersection.addTrafficLight(southLight);
+//        intersection.addTrafficLight(eastLight);
+//        intersection.addTrafficLight(westLight);
 
 //        // creating vehicles
 //        Vehicle vehicle1 = new Vehicle("1", Direction.WEST, Direction.EAST);
@@ -54,11 +59,18 @@ public class Main {
 //        System.out.println(northLight);
 
         try {
-            // reading commands from JSON file
-            CommandList commandList = JsonUtils.deserializeCommands("src/main/resources/commands.json");
+            // JSON with commands file path
+            String filePath = "src/main/resources/commands.json";
+
+            // creating intersection and simulation result
+            Intersection intersection = new Intersection();
+            SimulationResult simulationResult = new SimulationResult();
+
+            // reading commands from JSON file and getting results
+            CommandList commandList = JsonUtils.deserializeCommands(filePath);
             System.out.println("Deserialized commands: " + commandList.getCommands());
 
-            // execution of commands
+            // executing commands
             for (Command command : commandList.getCommands()) {
                 switch (command.getType()) {
                     case "addVehicle":
@@ -69,7 +81,8 @@ public class Main {
                         break;
 
                     case "step":
-                        System.out.println("Step: " + intersection.step());
+                        List<String> leftVehicles = intersection.step();
+                        simulationResult.addStepStatus(new StepStatus(leftVehicles));
                         break;
 
                     default:
@@ -78,8 +91,11 @@ public class Main {
                 }
             }
 
-            // printing intersection state
-            intersection.printQueues();
+            // serializing results to JSON
+            String outputPath = "src/main/resources/simulationResult.json";
+            JsonUtils.serializeResult(simulationResult, outputPath);
+
+            System.out.println("Simulation results saved to: " + outputPath);
 
         } catch (IOException e) {
             e.printStackTrace();
