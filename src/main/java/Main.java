@@ -3,6 +3,8 @@ import models.Intersection;
 import models.TrafficLight;
 import models.Vehicle;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import simulation.Command;
+import simulation.CommandList;
 import utils.JsonUtils;
 
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
 
+        // creating intersections
         Intersection intersection = new Intersection();
 
         // creating lights
@@ -24,43 +27,62 @@ public class Main {
         intersection.addTrafficLight(eastLight);
         intersection.addTrafficLight(westLight);
 
-        // creating vehicles
-        Vehicle vehicle1 = new Vehicle("1", Direction.WEST, Direction.EAST);
-        Vehicle vehicle2 = new Vehicle("2", Direction.WEST, Direction.EAST);
-        Vehicle vehicle3 = new Vehicle("3", Direction.EAST, Direction.WEST);
-        Vehicle vehicle4 = new Vehicle("4", Direction.NORTH, Direction.SOUTH);
+//        // creating vehicles
+//        Vehicle vehicle1 = new Vehicle("1", Direction.WEST, Direction.EAST);
+//        Vehicle vehicle2 = new Vehicle("2", Direction.WEST, Direction.EAST);
+//        Vehicle vehicle3 = new Vehicle("3", Direction.EAST, Direction.WEST);
+//        Vehicle vehicle4 = new Vehicle("4", Direction.NORTH, Direction.SOUTH);
+//
+//        // adding vehicles to intersection
+//        intersection.addVehicle(vehicle1);
+//        intersection.addVehicle(vehicle2);
+//        intersection.addVehicle(vehicle3);
+//        intersection.addVehicle(vehicle4);
+//
+//        intersection.printQueues();
+//
+//        // step simulation
+//        System.out.println("Step 1: " + intersection.step());
+//        System.out.println("Step 2: " + intersection.step());
+//        System.out.println("Step 3: " + intersection.step());
+//        System.out.println("Step 4: " + intersection.step());
+//
+//
+//        System.out.println(northLight);
+//
+//        northLight.nextColor();
+//        System.out.println(northLight);
 
-        // adding vehicles to intersection
-        intersection.addVehicle(vehicle1);
-        intersection.addVehicle(vehicle2);
-        intersection.addVehicle(vehicle3);
-        intersection.addVehicle(vehicle4);
-
-        intersection.printQueues();
-
-        // step simulation
-        System.out.println("Step 1: " + intersection.step());
-        System.out.println("Step 2: " + intersection.step());
-        System.out.println("Step 3: " + intersection.step());
-        System.out.println("Step 4: " + intersection.step());
-
-        // creating light
-
-        System.out.println(northLight);
-
-        northLight.nextColor();
-        System.out.println(northLight);
-
-        // JSON serialization
         try {
-            String json = JsonUtils.serialize(vehicle1);
-            System.out.println("Serialized JSON: " + json);
+            // reading commands from JSON file
+            CommandList commandList = JsonUtils.deserializeCommands("src/main/resources/commands.json");
+            System.out.println("Deserialized commands: " + commandList.getCommands());
 
-            Vehicle vehicle = JsonUtils.deserialize(json, Vehicle.class);
-            System.out.println("Deserialized Vehicle: " + vehicle);
+            // execution of commands
+            for (Command command : commandList.getCommands()) {
+                switch (command.getType()) {
+                    case "addVehicle":
+                        Direction startDirection = Direction.valueOf(command.getStartRoad().toUpperCase());
+                        Direction endDirection = Direction.valueOf(command.getEndRoad().toUpperCase());
+                        Vehicle vehicle = new Vehicle(command.getVehicleId(), startDirection, endDirection);
+                        intersection.addVehicle(vehicle);
+                        break;
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+                    case "step":
+                        System.out.println("Step: " + intersection.step());
+                        break;
+
+                    default:
+                        System.out.println("Unknown command type: " + command.getType());
+                        break;
+                }
+            }
+
+            // printing intersection state
+            intersection.printQueues();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 

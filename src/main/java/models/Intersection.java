@@ -14,7 +14,7 @@ public class Intersection {
     private List<TrafficLight> trafficLights = new ArrayList<>();
 
     // current light cycle (default - green for north and south)
-    private TrafficCycle currentGreen = TrafficCycle.NORTH_SOUTH;
+    private TrafficCycle currentGreen = TrafficCycle.EAST_WEST;
 
     // queues for each direction
     private Queue<Vehicle> northQueue = new LinkedList<>();
