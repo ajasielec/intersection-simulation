@@ -2,6 +2,10 @@ import enums.Direction;
 import models.Intersection;
 import models.TrafficLight;
 import models.Vehicle;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import utils.JsonUtils;
+
+import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
@@ -47,6 +51,17 @@ public class Main {
         northLight.nextColor();
         System.out.println(northLight);
 
+        // JSON serialization
+        try {
+            String json = JsonUtils.serialize(vehicle1);
+            System.out.println("Serialized JSON: " + json);
+
+            Vehicle vehicle = JsonUtils.deserialize(json, Vehicle.class);
+            System.out.println("Deserialized Vehicle: " + vehicle);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
     }

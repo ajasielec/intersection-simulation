@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import enums.Direction;
 import enums.TrafficCycle;
 
@@ -82,4 +83,5 @@ public class Intersection {
         System.out.println("East queue: " + eastQueue);
         System.out.println("West queue: " + westQueue);
     }
+
 }

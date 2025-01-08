@@ -14,6 +14,8 @@ public class Vehicle {
         this.endRoad = endRoad;
     }
 
+    public Vehicle() {}
+
     // getters
     public String getId() {return id;}
     public Direction getStartRoad() {return startRoad;}
